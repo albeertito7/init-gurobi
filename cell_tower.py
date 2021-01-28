@@ -38,9 +38,25 @@ for r in regions:
     m.addConstr(exp >= is_covered[r])
 """
 
+"""
+for r in regions:
+    lits = []
+    for t in sites:
+        if r in coverage[t]:
+            lits.append(built[t])
+    b = m.addVar(vtype=gp.GRB.BINARY)
+    m.addConstr(b == gp.or_(list))
+    # is_coverage[r] -> OR build
+    # is_coverage[r] -> b
+    m.addConstr((is_covered[r] == 1) >> (b == 1))
+    m.addConstr((b == 0) >> (is_covered[r] == 0))
+"""
+
 m.addConstr(build.prod(cost) <= budget, name="budget")
 
 m.setObjective(is_covered.prod(population), GRB.MAXIMIZE)
+
+#m.setObjective(is_covered.prod(population) - build.prod(cost), GRB.MAXIMIZE)
 
 m.optimize()
 
