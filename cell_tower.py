@@ -27,8 +27,17 @@ m = gp.Model("cell_tower")
 build = m.addVars(len(sites), vtype=GRB.BINARY, name="Build")
 is_covered = m.addVars(len(regions), vtype=GRB.BINARY, name="Is_covered")
 
-m.addConstrs((gp.quicksum(build[t] for t in sites if r in coverage[t]) >= is_covered[r]
-                        for r in regions), name="Build2cover")
+m.addConstrs((gp.quicksum(build[t] for t in sites if r in coverage[t]) >= is_covered[r] for r in regions), name="Build2cover")
+
+"""
+for r in regions:
+    exp = 0 #quicksum
+    for t in sites:
+        if r in coverage[t]:
+            exp += build[t]
+    m.addConstr(exp >= is_covered[r])
+"""
+
 m.addConstr(build.prod(cost) <= budget, name="budget")
 
 m.setObjective(is_covered.prod(population), GRB.MAXIMIZE)
